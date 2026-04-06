@@ -193,6 +193,16 @@ wss.on("connection", (ws) => {
       if (!room || !room.started || room.turn !== playerId) return;
       nextTurn(room);
     }
+
+    if (msg.type === "chat") {
+      const room = rooms[roomId];
+      if (!room || !playerId) return;
+      const name = room.players[playerId]?.name || "Unknown";
+      const color = room.players[playerId]?.color || "#fff";
+      const text = String(msg.text || "").trim().slice(0, 200);
+      if (!text) return;
+      broadcast(room, { type: "chat", name, color, text, id: playerId });
+    }
   });
 
   ws.on("close", () => {
